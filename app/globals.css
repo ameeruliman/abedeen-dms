@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Default theme setup */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -20,7 +21,506 @@
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(135deg, #f8f9fc 0%, #f0f4f8 50%, #faf5ff 100%);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Animated background particles */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(124, 37, 175, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(156, 71, 211, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ========================= */
+/* CUSTOM CSS FROM YOUR PHP  */
+/* ========================= */
+
+:root {
+  --primary: #7c25af;
+  --primary-light: #9c47d3;
+  --primary-dark: #5c1b84;
+  --accent: #f7b731;
+  --bg: #f8f9fc;
+  --white: #fff;
+  --text: #2d3748;
+  --text-light: #64748b;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Sidebar with glow effect */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 45px;
+  background: rgba(92, 27, 132, 0.95);
+  padding: 20px 6px;
+  color: var(--white);
+  box-shadow: var(--shadow), 0 0 40px rgba(124, 37, 175, 0.3);
+  overflow: hidden;
+  transition: width 0.3s ease, backdrop-filter 0.3s ease, background 0.3s ease;
+  z-index: 1000;
+  backdrop-filter: blur(0px);
+  border-right: 1px solid rgba(156, 71, 211, 0.3);
+}
+
+/* Hamburger Menu Icon */
+.sidebar-toggle {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 25px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.sidebar-toggle span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.sidebar:hover .sidebar-toggle span:nth-child(1) {
+  transform: translateY(2px);
+}
+
+.sidebar:hover .sidebar-toggle span:nth-child(3) {
+  transform: translateY(-2px);
+}
+
+
+
+/* Hover sidebar */
+.sidebar:hover {
+  width: 180px;
+  backdrop-filter: blur(10px);
+  background: rgba(92, 27, 132, 0.9);
+  box-shadow: var(--shadow), 0 0 60px rgba(124, 37, 175, 0.5);
+}
+
+.sidebar-menu {
+  margin-top: 100px;
+  list-style: none;
+}
+
+.sidebar-menu li {
+  margin-bottom: 8px;
+}
+
+.sidebar-menu a {
+  color: var(--white);
+  text-decoration: none;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Hover effect with shimmer */
+.sidebar-menu a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  transition: left 0.5s ease;
+}
+
+.sidebar-menu a:hover::before {
+  left: 100%;
+}
+
+/* When sidebar is hovered, align to left */
+.sidebar:hover .sidebar-menu a {
+  justify-content: flex-start;
+}
+
+.sidebar-menu a:hover {
+  background: var(--primary-light);
+  box-shadow: 0 4px 15px rgba(156, 71, 211, 0.4);
+}
+
+.sidebar-menu a .icon {
+  font-size: 16px;
+  min-width: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* Text animation */
+.sidebar-menu a .text {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  margin-left: 0;
+  overflow: hidden;
+}
+
+.sidebar:hover .sidebar-menu a .text {
+  opacity: 1;
+  transform: translateX(0);
+  margin-left: 12px;
+}
+
+.sidebar:hover .sidebar-menu a .icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* RESPONSIVE SIDEBAR */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 40px;
+    padding: 15px 5px;
+  }
+
+  .sidebar:hover {
+    width: 150px;
+  }
+
+  .sidebar-menu a {
+    padding: 10px;
+  }
+
+  .sidebar-menu a .icon {
+    font-size: 14px;
+    min-width: 18px;
+  }
+}
+
+/* Top header with animated gradient */
+.top-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--white);
+  padding: 30px 40px;
+  box-shadow: 0 15px 35px rgba(124, 37, 175, 0.4);
+  position: relative;
+  z-index: 500;
+  overflow: hidden;
+}
+
+/* Animated gradient overlay */
+.top-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 100%);
+  animation: headerShine 8s ease-in-out infinite;
+}
+
+@keyframes headerShine {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.logo {
+  height: 85px;
+  width: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  animation: logoGlow 3s ease-in-out infinite;
+}
+
+@keyframes logoGlow {
+  0%, 100% { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); }
+  50% { box-shadow: 0 8px 35px rgba(255, 255, 255, 0.4); }
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.office-info h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+  background: linear-gradient(45deg, #fff, #f0f8ff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+}
+
+.office-info p {
+  font-size: 1rem;
+  opacity: 0.95;
+  margin: 3px 0;
+  color: #e8f4fd;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+}
+
+.contact-info {
+  text-align: right;
+  font-size: 1rem;
+}
+
+.contact-info p {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
+  color: #e8f4fd;
+  font-weight: 500;
+}
+
+.contact-info i {
+  background: var(--white);
+  color: var(--primary);
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 14px;
+  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.contact-info i:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.5);
+}
+
+.admin-login-btn {
+  padding: 15px 30px;
+  background: var(--white);
+  color: var(--primary);
+  font-weight: 600;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Button shimmer effect */
+.admin-login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(124, 37, 175, 0.2), 
+    transparent);
+  transition: left 0.5s ease;
+}
+
+.admin-login-btn:hover::before {
+  left: 100%;
+}
+
+.admin-login-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.4);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 32px;
+  transition: padding-left 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
+}
+
+
+
+.header h1 {
+  color: var(--primary-dark);
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+  position: relative;
+  display: inline-block;
+}
+
+/* Underline decoration */
+.header h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+  border-radius: 2px;
+}
+
+.header p {
+  color: var(--text-light);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.menu-icon {
+  font-size: 3rem;
+  color: var(--primary);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 4px 8px rgba(124, 37, 175, 0.2));
+}
+
+.menu-item:hover .menu-icon {
+  color: var(--primary-light);
+  transform: scale(1.2) rotateY(15deg);
+  filter: drop-shadow(0 8px 16px rgba(156, 71, 211, 0.4));
+}
+
+.menu-item {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 40px 32px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(124, 37, 175, 0.1);
+}
+
+
+
+/* Animated gradient background on hover */
+.menu-item::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(124, 37, 175, 0.05) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.menu-item:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+.menu-item:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover), 0 0 30px rgba(124, 37, 175, 0.15);
+  border-color: rgba(124, 37, 175, 0.3);
+}
+
+.menu-item a {
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.menu-item h2 {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin-bottom: 12px;
+  font-weight: 600;
+  position: relative;
+}
+
+.menu-item p {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.5;
+  position: relative;
 }
