@@ -513,6 +513,44 @@ body::before {
   }
 }
 
+        .progress-stages-new { display: flex; flex-direction: column; gap: 24px; margin-bottom: 32px; }
+        .stage-row-new { display: flex; align-items: flex-start; gap: 24px; padding: 20px; border-radius: 12px; background: #ffffff; border: 2px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; position: relative; padding-top: 40px; }
+        .stage-box-new { width: 90px; height: 90px; border: 3px solid #cbd5e0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #f7fafc; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .stage-box-new.pending { border-color: #cbd5e0 !important; background: #f7fafc !important; color: #4a5568 !important; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important; }
+        .stage-box-new.completed { border-color: #7c25af; background: #7c25af; color: white; box-shadow: 0 4px 12px rgba(124, 37, 175, 0.3); }
+        .stage-box-new.current { border-color: #7c25af; background: #7c25af; color: white; animation: pulse 2s infinite; box-shadow: 0 4px 12px rgba(124, 37, 175, 0.4); }
+        .stage-number-new { font-size: 60px; font-weight: 900; font-family: 'Arial Black', 'Helvetica', sans-serif; line-height: 1; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
+        .progress-arrow-new { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .arrow-pointer-new { font-size: 24px; color: var(--accent); font-weight: bold; }
+        .progress-percentage-new { font-size: 14px; font-weight: 600; color: var(--primary); min-width: 50px; text-align: right; }
+        .stage-box-container-new { display: flex; align-items: center; gap: 16px; min-width: 120px; margin-left: 20px; }
+        .stage-status-badge {
+          position: absolute;
+          top: 0;
+          left: 0;
+          padding: 4px 12px;
+          border-top-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          font-weight: bold;
+          color: white;
+          text-transform: uppercase;
+          font-size: 12px;
+          z-index: 10;
+        }
+        .stage-status-badge.done {
+          background-color: #4CAF50; /* Green */
+        }
+
+        .stage-status-badge.in-progress {
+          background-color: #FFC107; /* Yellow/Amber */
+          color: #333; /* Darker text for yellow background */
+        }
+
+        .stage-status-badge.pending {
+          background-color: #9E9E9E; /* Grey */
+          color: white;
+        }
+
 /* Admin Panel Styles */
 .admin-panel {
   min-height: 100vh;
@@ -639,40 +677,61 @@ body::before {
 }
 
 .task-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px; /* Add some gap between task and date */
+  }
+  
+  .task-left {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Gap between checkbox and text */
+  }
 
-.task-checkbox {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 0;
-  font-size: 14px;
-  user-select: none;
-}
+  .task-item-new {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px; /* Add some gap between task and date */
+  }
+  
+  .task-left-new {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Gap between checkbox and text */
+  }
+
+  .task-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 0;
+    font-size: 14px;
+    user-select: none;
+  }
 
 .task-checkbox input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
+  position: relative; /* Change to relative */
+  opacity: 1; /* Make it visible */
   cursor: pointer;
-  height: 0;
-  width: 0;
+  height: 20px; /* Set a fixed height */
+  width: 20px; /* Set a fixed width */
+  margin-right: 10px; /* Add some space to the right of the checkbox */
 }
 
 .checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
+  /* Remove absolute positioning */
   height: 20px;
   width: 20px;
   background-color: #eee;
   border-radius: 4px;
   border: 2px solid #ddd;
   transition: all 0.3s ease;
+  display: none; /* Hide the custom checkmark, use native checkbox */
 }
 
 .task-checkbox:hover input ~ .checkmark {
@@ -1514,6 +1573,7 @@ body::before {
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 .status-value.found {
@@ -1532,6 +1592,10 @@ body::before {
   background: linear-gradient(135deg, #dbeafe, #bfdbfe);
   color: #1e40af;
   border: 1px solid #3b82f6;
+}
+
+.status-value.update:hover {
+  background: linear-gradient(135deg, #bfdbfe, #93c5fd);
 }
 
 .status-value.create {
@@ -1573,6 +1637,16 @@ body::before {
 
 .visa-management-container .form-group {
   margin-bottom: 25px;
+}
+
+/* Visa Record Details Section */
+.visa-record-details-section h4 {
+  color: #2d3748; /* Dark color for visibility */
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f1f5f9;
 }
 
 .visa-management-container .form-group label {
@@ -2982,95 +3056,110 @@ main {
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  /* Enforce full-width layout and remove sidebar gutter on mobile */
-  main {
-    margin-left: 0 !important;
-    padding-top: var(--mobile-header-height) !important;
-  }
-
-  .container {
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 16px !important;
-  }
-
-  /* News: left-align and stretch to full width */
-  .news-section {
-    margin-left: 0 !important;
-    padding: 20px 16px !important;
-    text-align: left;
-  }
-
-  .news-container {
-    grid-template-columns: 1fr;
-    justify-items: start;
-    justify-content: start;
-    align-items: start;
-    text-align: left;
+/* Visa Stage Card Design */
+.stage-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    max-width: 800px;
     width: 100%;
-    margin: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
+    overflow: hidden;
+    border-left: 5px solid #0066ff;
+    margin-bottom: 20px; /* Added for spacing between cards if multiple */
+}
 
-  .department-news,
-  .news-item {
-    width: 100%;
-    max-width: 100%;
-    text-align: left;
-  }
+.stage-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid #e9ecef;
+}
 
-  .dept-title {
-    justify-content: flex-start;
-  }
+.stage-title {
+    color: #0066ff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-  /* Page title: bigger, single line */
-  .header h1,
-  .page-header h1,
-  .page-title h2 {
+.tasks-list {
+    padding: 10px 0;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 25px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+}
+
+.task-item:hover {
+    background: #f8f9fa;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.checkmark {
+    color: #28a745;
+    font-size: 20px;
+    min-width: 20px;
+}
+
+.task-text {
+    color: #333333;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.task-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6c757d;
+    font-size: 14px;
     white-space: nowrap;
-    word-break: keep-all;
-    display: block;
-    font-size: clamp(26px, 7.5vw, 34px) !important;
-    line-height: 1.05;
-    margin-bottom: 16px !important;
-  }
+}
 
-  /* Hide page description on mobile */
-  .header p,
-  .page-header p,
-  .page-title p {
-    display: none !important;
-  }
+.task-date i {
+    font-size: 13px;
+}
 
-  /* Underline decoration: keep compact under the larger title */
-  .header h1::after {
-    width: 54px;
-    height: 3px;
-  }
+@media (max-width: 768px) {
+    .stage-card {
+        border-radius: 8px;
+    }
 
-  /* Department buttons: force 2 columns x 3 rows on mobile */
-  .menu-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px !important;
-    align-items: stretch;
-  }
+    .stage-header {
+        padding: 16px 20px;
+    }
 
-  .menu-item {
-    padding: 20px 16px !important;
-  }
+    .stage-title {
+        font-size: 1.1rem;
+    }
 
-  .menu-icon {
-    font-size: 2.2rem !important;
-    margin-bottom: 10px !important;
-  }
+    .task-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 16px 20px;
+    }
 
-  .menu-item h2 {
-    font-size: 1rem !important;
-  }
+    .task-left {
+        width: 100%;
+    }
 
-  .menu-item p {
-    font-size: 0.85rem !important;
-  }
+    .task-date {
+        margin-left: 35px;
+    }
 }

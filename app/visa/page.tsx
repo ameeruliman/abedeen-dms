@@ -360,29 +360,32 @@ export default function VisaPage() {
                   {[1, 2, 3, 4].map((st) => {
                     const status = stageStatus(st, visaStatus.tasks);
                     const isCurrent = st === getCurrentStage(visaStatus.tasks);
+                    const stageStats = getStageStats(st, visaStatus.tasks);
+                    const isStageInProgress = stageStats.completed > 0 && stageStats.completed < stageStats.total;
+
                     const boxClass =
                       status === "done"
                         ? "stage-box-new completed"
-                        : isCurrent
+                        : isStageInProgress
                         ? "stage-box-new current"
                         : "stage-box-new pending";
                     const stageTasks = getTasksForStage(st, visaStatus.tasks);
 
                     return (
                       <div key={st} className="stage-row-new">
+                        <span className={`stage-status-badge ${status}`}>
+                          {status === "done"
+                            ? "DONE"
+                            : status === "in-progress"
+                            ? "IN PROGRESS"
+                            : "PENDING"}
+                        </span>
                         <div className="stage-box-container-new">
                           <div className={boxClass}>
                             <span className="stage-number-new">{st}</span>
                           </div>
                           <div className="progress-arrow-new">
                             <span className="arrow-pointer-new">→</span>
-                            <span className="progress-percentage-new">
-                              {status === "done"
-                                ? "Done"
-                                : status === "in-progress"
-                                ? "In Progress"
-                                : "Pending"}
-                            </span>
                           </div>
                         </div>
 
@@ -394,14 +397,19 @@ export default function VisaPage() {
                             <div className="task-list-new">
                               {stageTasks.map((t: any, idx: number) => (
                                 <div key={idx} className="task-item-new">
-                                  <span className={`check-icon ${t.isCompleted ? "done" : "pending"}`}>
-                                    {t.isCompleted ? "✓" : ""}
-                                  </span>
-                                  <span>{t.description}</span>
-                                  {t.isCompleted && t.completedAt && (
-                                    <span className="task-date">
-                                      {new Date(t.completedAt).toLocaleString()}
-                                    </span>
+                                  <div className="task-left-new">
+                                    <label className="task-checkbox">
+                                      <input type="checkbox" checked={t.isCompleted} readOnly />
+                                      <span className="checkmark"></span>
+                                      <span className={`task-text ${t.isCompleted ? 'completed' : ''}`}>
+                                        {t.description}
+                                      </span>
+                                    </label>
+                                  </div>
+                                  {t.completedAt && (
+                                    <small className="completion-date">
+                        {new Date(t.completedAt).toLocaleDateString()} {new Date(t.completedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                      </small>
                                   )}
                                 </div>
                               ))}

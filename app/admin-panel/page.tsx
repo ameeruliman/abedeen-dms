@@ -72,6 +72,8 @@ export default function AdminPanel() {
   const [currentVisaTasks, setCurrentVisaTasks] = useState<{[key: number]: any[]}>({});
   const [selectedSchoolForTasks, setSelectedSchoolForTasks] = useState("");
   const [taskMessage, setTaskMessage] = useState("");
+const [showVisaTasks, setShowVisaTasks] = useState(false);
+const [showAddNewSchoolIdSection, setShowAddNewSchoolIdSection] = useState(false);
 
   // Register Admin management (only for superadmin)
   const [newAdminUsername, setNewAdminUsername] = useState("");
@@ -351,19 +353,21 @@ export default function AdminPanel() {
       const data = await response.json();
       if (data.success) {
         const isExistingRecord = Object.keys(currentVisaTasks).length > 0;
-        const successMessage = isExistingRecord 
-          ? "Visa record updated successfully!" 
-          : "School ID added successfully!";
-        setVisaMessage(successMessage);
-
         // Keep the ID for the tasks header and actions
         setSelectedSchoolForTasks(requestBody.schoolId);
 
         setSchoolId("");
         setPersonType("");
         setStage("");
-        // Refresh the status after successful submission
-        fetchVisaTasks(requestBody.schoolId);
+        // Refresh the status after successful submission and validate existence
+        await fetchVisaTasks(requestBody.schoolId);
+
+        // Check if tasks exist after fetch to confirm ID was added
+        const tasksExistAfterFetch = Object.keys(currentVisaTasks).length > 0;
+        const successMessage = isExistingRecord 
+          ? "Visa record updated successfully!" 
+          : tasksExistAfterFetch ? "School ID added successfully!" : "Failed to find or add school ID.";
+        setVisaMessage(successMessage);
       } else {
         setVisaMessage(data.error || "Failed to update visa status");
       }
@@ -385,13 +389,16 @@ export default function AdminPanel() {
       if (response.ok && data.tasks) {
         setCurrentVisaTasks(data.tasks);
         setTaskMessage("");
+        setShowAddNewSchoolIdSection(false); // Tasks found, hide add new section
       } else {
         setCurrentVisaTasks({});
         setTaskMessage(data.error || "No tasks found for this school ID");
+        setShowAddNewSchoolIdSection(true); // No tasks found, show add new section
       }
     } catch (error) {
       setCurrentVisaTasks({});
       setTaskMessage("Network error. Please try again.");
+      setShowAddNewSchoolIdSection(false); // Network error, hide add new section
     }
   };
 
@@ -884,7 +891,7 @@ export default function AdminPanel() {
                         <label htmlFor="schoolId">
                           <i className="fas fa-search"></i> School ID Lookup
                         </label>
-                        <div>
+                        <div> {/* This div should wrap the input and button */}
                           <input
                             type="text"
                             id="schoolId"
@@ -892,14 +899,25 @@ export default function AdminPanel() {
                             onChange={(e) => {
                               setSchoolId(e.target.value);
                               setSelectedSchoolForTasks(e.target.value);
+                              // Clear old task data when typing new ID
+                              setCurrentVisaTasks({});
+                              setVisaMessage(''); // Clear any previous visa messages
+                              setTaskMessage(''); // Clear any previous task messages
+                             setShowAddNewSchoolIdSection(false); // Hide add section when typing new ID
+                           }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault(); // Prevent default form submission
+                                fetchVisaTasks(schoolId);
+                              }
                             }}
-                            placeholder="Enter school ID (e.g. S12345)"
-                            required
+                             placeholder="Enter school ID (e.g. S12345)"
+                             required
                           />
-                          <button 
-                            type="button" 
+                          <button
+                            type="button" // Ensure this is 'button'
                             className="btn btn-secondary"
-                            onClick={() => fetchVisaTasks(schoolId)}
+                            onClick={() => fetchVisaTasks(schoolId)} // Ensure this onClick is present
                             disabled={!schoolId.trim()}
                           >
                             <i className="fas fa-search"></i>
@@ -922,11 +940,16 @@ export default function AdminPanel() {
                                 <i className="fas fa-check-circle"></i> Found
                               </span>
                             </div>
+
                             <div className="status-item">
                               <span className="status-label">Action Available:</span>
-                              <span className="status-value update">
-                                <i className="fas fa-edit"></i> Update Existing Record
-                              </span>
+                              <button
+                                type="button"
+                                className="status-value update"
+                                onClick={() => setShowVisaTasks(!showVisaTasks)}
+                              >
+                                <i className="fas fa-edit"></i> Update Record
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -940,24 +963,27 @@ export default function AdminPanel() {
                     {/* Visa Status Update Form */}
                     <form onSubmit={handleVisaUpdate} className="admin-form">
                       {/* Keep add controls for new records */}
-                      {schoolId.trim() && Object.keys(currentVisaTasks).length === 0 && (
-                        <div className="form-group">
-                          <label htmlFor="personType">Person Type</label>
-                          <select
-                            id="personType"
-                            value={personType}
-                            onChange={(e) => {
-                              setPersonType(e.target.value);
-                            }}
-                          >
-                            <option value="">Select person type</option>
-                            <option value="parent">Parent</option>
-                            <option value="student">Student</option>
-                          </select>
+                      {showAddNewSchoolIdSection && ( // <--- CHANGE THIS LINE
+                       <div className="visa-record-details-section">
+                         <h4><i className="fas fa-user"></i> Add New School ID</h4>
+                         <div className="form-group">
+                            <label htmlFor="personType">Person Type</label>
+                            <select
+                              id="personType"
+                              value={personType}
+                              onChange={(e) => {
+                                setPersonType(e.target.value);
+                              }}
+                            >
+                              <option value="">Select person type</option>
+                              <option value="parent">Parent</option>
+                              <option value="student">Student</option>
+                            </select>
+                          </div>
                         </div>
                       )}
                       
-                      {schoolId.trim() && Object.keys(currentVisaTasks).length === 0 && (
+                      {showAddNewSchoolIdSection && (
                         <div className="form-group">
                           <button type="submit" className="btn btn-primary" disabled={!schoolId.trim() || !personType}>
                             <i className="fas fa-check-circle"></i>
@@ -968,7 +994,7 @@ export default function AdminPanel() {
                     </form>
 
                     {/* Task Management */}
-                    {Object.keys(currentVisaTasks).length > 0 && (
+                    {showVisaTasks && Object.keys(currentVisaTasks).length > 0 && (
                       <div className="visa-tasks-container">
                         <h4><i className="fas fa-tasks"></i> Visa Process Tasks for {selectedSchoolForTasks || schoolId}</h4>
                         {[1, 2, 3, 4].map(stage => (
@@ -1001,17 +1027,19 @@ export default function AdminPanel() {
                               <div className="tasks-list">
                                 {currentVisaTasks[stage].map((task: any, index: number) => (
                                   <div key={index} className="task-item">
-                                    <label className="task-checkbox">
-                                      <input
-                                        type="checkbox"
-                                        checked={task.isCompleted}
-                                        onChange={(e) => handleTaskToggle(stage, task.taskIndex, e.target.checked)}
-                                      />
-                                      <span className="checkmark"></span>
-                                      <span className={`task-text ${task.isCompleted ? 'completed' : ''}`}>
-                                        {task.description}
-                                      </span>
-                                    </label>
+                                    <div className="task-left">
+                                      <label className="task-checkbox">
+                                        <input
+                                          type="checkbox"
+                                          checked={task.isCompleted}
+                                          onChange={(e) => handleTaskToggle(stage, task.taskIndex, e.target.checked)}
+                                        />
+                                        <span className="checkmark"></span>
+                                        <span className={`task-text ${task.isCompleted ? 'completed' : ''}`}>
+                                          {task.description}
+                                        </span>
+                                      </label>
+                                    </div>
                                     {task.completedAt && (
                                       <small className="completion-date">
                                         Completed: {new Date(task.completedAt).toLocaleDateString()}
