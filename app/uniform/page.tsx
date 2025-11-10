@@ -1,27 +1,26 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 
-interface FormFile {
+interface UniformFile {
   id: number;
   title: string;
   description: string;
   file_name: string;
-  department: string;
   upload_date: string;
+  department: string;
   file_size: number;
 }
 
-export default function RegistrationPage() {
-  const [files, setFiles] = useState<FormFile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+export default function UniformPage() {
+  const [files, setFiles] = useState<UniformFile[]>([]);
+  const [filteredFiles, setFilteredFiles] = useState<UniformFile[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [filteredFiles, setFilteredFiles] = useState<FormFile[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchFiles();
+    fetchUniformFiles();
   }, []);
 
   useEffect(() => {
@@ -32,34 +31,48 @@ export default function RegistrationPage() {
     setFilteredFiles(filtered);
   }, [files, searchTerm]);
 
-  const fetchFiles = async () => {
+  const fetchUniformFiles = async () => {
     try {
-      const response = await fetch('/api/forms?department=registration');
+      setLoading(true);
+      const response = await fetch('/api/forms?department=uniform');
       if (response.ok) {
         const data = await response.json();
         setFiles(data);
       }
     } catch (error) {
-      console.error('Error fetching files:', error);
+      console.error('Error fetching uniform files:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  const handleDownload = (filePath: string, fileName: string) => {
+    const link = document.createElement('a');
+    link.href = filePath;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handlePreview = (filePath: string) => {
+    window.open(filePath, '_blank');
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'short',
+      month: 'long',
       day: 'numeric'
     });
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (!bytes || bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   return (
@@ -78,28 +91,42 @@ export default function RegistrationPage() {
           --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
-
-        /* Removed page-specific Sidebar overrides to use global responsive Sidebar */
-        /* .sidebar { ... } */
-        /* .sidebar:hover { ... } */
-        /* .sidebar-menu { ... } */
-
-        .top-header {
-          background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-          color: var(--white);
-          padding: 30px 40px;
-          box-shadow: 0 15px 35px rgba(124, 37, 175, 0.4);
-          position: relative;
-          z-index: 500;
-          overflow: hidden;
+        body {
+          font-family: 'Inter', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          line-height: 1.6;
+          min-height: 100vh;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 60px 32px; transition: padding-left 0.3s ease; }
-        .page-header { text-align: center; margin-bottom: 60px; }
-        .page-header h1 { color: var(--primary-dark); font-size: 3rem; font-weight: 700; margin-bottom: 16px; letter-spacing: -1px; }
-        .page-header p { color: var(--text-light); font-size: 1.2rem; max-width: 600px; margin: 0 auto 32px; }
+        /* Using global Header styles; removed Uniform-specific header overrides
+           (.top-header, .header-container, .header-left, .logo, .office-info,
+           .header-right, .contact-info) to match Visa mobile behavior. */
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 60px 32px;
+          transition: padding-left 0.3s ease;
+        }
+
+        .page-header {
+          text-align: center;
+          margin-bottom: 60px;
+        }
+        .page-header h1 {
+          color: var(--primary-dark);
+          font-size: 3rem;
+          font-weight: 700;
+          margin-bottom: 16px;
+          letter-spacing: -1px;
+        }
+        .page-header p {
+          color: var(--text-light);
+          font-size: 1.2rem;
+          max-width: 600px;
+          margin: 0 auto 32px;
+        }
 
         .search-controls {
           display: flex;
@@ -121,7 +148,6 @@ export default function RegistrationPage() {
           flex: 1;
           min-width: 280px;
         }
-
         .search-wrap input {
           border: 0;
           outline: none;
@@ -131,11 +157,7 @@ export default function RegistrationPage() {
           color: var(--text);
           background: transparent;
         }
-
-        .search-wrap svg {
-          margin-right: 8px;
-          opacity: 0.6;
-        }
+        .search-wrap svg { margin-right: 8px; opacity: 0.6; }
 
         .view-toggle {
           display: flex;
@@ -145,29 +167,9 @@ export default function RegistrationPage() {
           border-radius: 12px;
           box-shadow: var(--shadow);
         }
-
-        .view-btn {
-          background: transparent;
-          border: none;
-          padding: 12px 20px;
-          border-radius: 8px;
-          cursor: pointer;
-          font-weight: 600;
-          color: var(--text-light);
-          transition: all 0.3s ease;
-          font-size: 0.9rem;
-        }
-
-        .view-btn.active {
-          background: var(--primary);
-          color: var(--white);
-          box-shadow: 0 4px 12px rgba(124, 37, 175, 0.3);
-        }
-
-        .view-btn:hover:not(.active) {
-          background: rgba(124, 37, 175, 0.1);
-          color: var(--primary);
-        }
+        .view-btn { background: transparent; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--text-light); transition: all 0.3s ease; font-size: 0.9rem; }
+        .view-btn.active { background: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(124, 37, 175, 0.3); }
+        .view-btn:hover:not(.active) { background: rgba(124, 37, 175, 0.1); color: var(--primary); }
 
         .files-grid {
           display: grid;
@@ -192,6 +194,29 @@ export default function RegistrationPage() {
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(124, 37, 175, 0.1);
+        }
+
+        .file-card::before {
+          content: "";
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(45deg, transparent, rgba(124, 37, 175, 0.05), transparent);
+          transform: rotate(45deg);
+          transition: all 0.3s ease;
+          opacity: 0;
+        }
+
+        .file-card:hover::before {
+          opacity: 1;
+          animation: shimmer 0.6s ease-in-out;
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+          100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .file-card:hover {
@@ -266,6 +291,8 @@ export default function RegistrationPage() {
           display: flex;
           align-items: center;
           gap: 8px;
+          border: none;
+          cursor: pointer;
         }
 
         .btn-primary {
@@ -320,6 +347,7 @@ export default function RegistrationPage() {
           line-height: 1.6;
         }
 
+        /* List view styles */
         .files-list .file-card {
           padding: 28px 32px;
           display: flex;
@@ -364,35 +392,43 @@ export default function RegistrationPage() {
           flex-shrink: 0;
         }
 
+        /* Responsive styles */
         @media (max-width: 768px) {
-          .search-controls {
-            flex-direction: column;
-            align-items: stretch;
+          /* Header: match Visa mobile behavior */
+          .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px !important;
+            min-height: var(--mobile-header-height);
+            z-index: 500;
           }
-          
-          .search-wrap {
-            max-width: none;
-            min-width: auto;
+          .header-container {
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            gap: 10px !important;
+            text-align: left !important;
           }
-          
-          .view-toggle {
-            align-self: center;
+          .header-right {
+            flex-direction: row !important;
+            gap: 12px !important;
           }
-          
-          .files-list .file-card {
-            flex-direction: column;
-            align-items: flex-start;
-            text-align: left;
+          .contact-info { 
+            display: none !important; 
           }
-          
-          .file-actions {
-            flex-direction: column;
-            width: 100%;
+          .contact-icons { 
+            display: flex !important; 
           }
-          
-          .btn {
-            justify-content: center;
-          }
+
+          /* Existing page content tweaks remain the same */
+          .search-controls { flex-direction: column; align-items: stretch; }
+          .search-wrap { max-width: none; min-width: auto; }
+          .view-toggle { align-self: center; }
+          .files-list .file-card { flex-direction: column; align-items: flex-start; text-align: left; }
+          .file-actions { flex-direction: column; width: 100%; }
+          .btn { justify-content: center; }
         }
 
         @media (max-width: 480px) {
@@ -409,22 +445,11 @@ export default function RegistrationPage() {
           }
         }
       `}</style>
-
-      {/* Google Fonts */}
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      {/* Font Awesome */}
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-      {/* Sidebar */}
-      {/* <Sidebar /> */}
-      {/* <header className="top-header"> ... </header> */}
-
       <Layout>
-        {/* Main Content */}
         <div className="container">
           <div className="page-header">
-            <h1>Registration Department</h1>
-            <p>Official registration forms & documents — latest first.</p>
+            <h1>Uniform Department</h1>
+            <p>Official uniform forms & documents — latest first.</p>
           </div>
 
           <div className="search-controls">
@@ -434,22 +459,20 @@ export default function RegistrationPage() {
                 <path d="M10.75 18a7.25 7.25 0 1 1 0-14.5 7.25 7.25 0 0 1 0 14.5z" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input 
-                id="search" 
-                placeholder="Search by title or description"
+                type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by title or description"
               />
             </div>
             <div className="view-toggle">
               <button 
-                id="gridViewBtn" 
                 className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
                 onClick={() => setViewMode('grid')}
               >
                 <i className="fas fa-grip"></i> Grid
               </button>
               <button 
-                id="listViewBtn" 
                 className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
                 onClick={() => setViewMode('list')}
               >
@@ -461,13 +484,13 @@ export default function RegistrationPage() {
           {loading ? (
             <div className="empty-state">
               <i className="fas fa-spinner fa-spin"></i>
-              <h3>Loading registration forms...</h3>
-              <p>Please wait while we fetch the latest forms for you.</p>
+              <h3>Loading...</h3>
+              <p>Please wait while we fetch the uniform forms.</p>
             </div>
           ) : filteredFiles.length === 0 ? (
             <div className="empty-state">
-              <i className="fas fa-folder-open"></i>
-              <h3>No registration forms available</h3>
+              <i className="fas fa-shirt"></i>
+              <h3>No Uniform forms available</h3>
               <p>If you are an admin, you can upload new forms from the admin panel to make them available for download.</p>
             </div>
           ) : (
@@ -477,7 +500,7 @@ export default function RegistrationPage() {
                   {viewMode === 'list' && (
                     <>
                       <div className="file-meta">
-                        <span className="dept-badge">Registration</span>
+                        <span className="dept-badge">Uniform</span>
                         <span className="file-date">{formatDate(file.upload_date)}</span>
                       </div>
                       <div className="file-content">
@@ -485,7 +508,7 @@ export default function RegistrationPage() {
                         <p>{file.description}</p>
                         <div className="file-footer">
                           <div className="file-info">
-                            {formatFileSize(file.file_size)}
+                            {formatFileSize(file.file_size || 0)}
                           </div>
                           <div className="file-actions">
                             <a href={`/uploads/${file.file_name}`} className="btn btn-primary" target="_blank">
@@ -502,14 +525,14 @@ export default function RegistrationPage() {
                   {viewMode === 'grid' && (
                     <>
                       <div className="file-meta">
-                        <span className="dept-badge">Registration</span>
+                        <span className="dept-badge">Uniform</span>
                         <span className="file-date">{formatDate(file.upload_date)}</span>
                       </div>
                       <h3>{file.title}</h3>
                       <p>{file.description}</p>
                       <div className="file-footer">
                         <div className="file-info">
-                          {formatFileSize(file.file_size)}
+                          {formatFileSize(file.file_size || 0)}
                         </div>
                         <div className="file-actions">
                           <a href={`/uploads/${file.file_name}`} className="btn btn-primary" target="_blank">

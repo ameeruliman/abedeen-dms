@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.1",
-    "next": "15.5.4",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "@prisma/client": "^6.16.3",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.2",
+    "mysql2": "^3.15.1",
+    "next": "^15.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -22,6 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
+    "prisma": "^6.16.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

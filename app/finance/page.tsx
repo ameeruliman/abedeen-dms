@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
+import Sidebar from "@/components/Sidebar";
 
 interface FormFile {
   id: number;
@@ -13,7 +14,7 @@ interface FormFile {
   file_size: number;
 }
 
-export default function RegistrationPage() {
+export default function FinancePage() {
   const [files, setFiles] = useState<FormFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,7 +35,7 @@ export default function RegistrationPage() {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch('/api/forms?department=registration');
+      const response = await fetch('/api/forms?department=finance');
       if (response.ok) {
         const data = await response.json();
         setFiles(data);
@@ -64,7 +65,7 @@ export default function RegistrationPage() {
 
   return (
     <>
-      <style jsx global>{`
+      <style jsx>{`
         :root {
           --primary: #7c25af;
           --primary-light: #9c47d3;
@@ -78,13 +79,19 @@ export default function RegistrationPage() {
           --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
 
-        /* Removed page-specific Sidebar overrides to use global responsive Sidebar */
-        /* .sidebar { ... } */
-        /* .sidebar:hover { ... } */
-        /* .sidebar-menu { ... } */
+        body {
+          font-family: 'Inter', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          line-height: 1.6;
+          min-height: 100vh;
+        }
 
         .top-header {
           background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -96,10 +103,134 @@ export default function RegistrationPage() {
           overflow: hidden;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 60px 32px; transition: padding-left 0.3s ease; }
-        .page-header { text-align: center; margin-bottom: 60px; }
-        .page-header h1 { color: var(--primary-dark); font-size: 3rem; font-weight: 700; margin-bottom: 16px; letter-spacing: -1px; }
-        .page-header p { color: var(--text-light); font-size: 1.2rem; max-width: 600px; margin: 0 auto 32px; }
+        .header-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: relative;
+          z-index: 1;
+        }
+
+        .header-left {
+          display: flex;
+          align-items: center;
+          gap: 25px;
+        }
+
+        .logo {
+          height: 85px;
+          width: 85px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .logo img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+
+        .office-info h2 {
+          font-size: 1.8rem;
+          font-weight: 700;
+          margin-bottom: 6px;
+          letter-spacing: -0.5px;
+          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+          background: linear-gradient(45deg, #fff, #f0f8ff);
+          background-clip: text;
+          -webkit-background-clip: text;
+          color: transparent;
+        }
+
+        .office-info p {
+          font-size: 1rem;
+          opacity: 0.95;
+          margin: 3px 0;
+          color: #e8f4fd;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-right {
+          display: flex;
+          align-items: center;
+          gap: 35px;
+        }
+
+        .contact-info {
+          text-align: right;
+          font-size: 1rem;
+        }
+
+        .contact-info p {
+          margin: 8px 0;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          justify-content: flex-end;
+          color: #e8f4fd;
+          font-weight: 500;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-info i {
+          background: var(--white);
+          color: var(--primary);
+          padding: 8px;
+          border-radius: 10px;
+          font-size: 14px;
+          box-shadow: 0 3px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .back-home-btn {
+          padding: 15px 30px;
+          background: var(--white);
+          color: var(--primary);
+          font-weight: 600;
+          border-radius: 50px;
+          text-decoration: none;
+          transition: all 0.4s ease;
+          box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+          position: relative;
+          overflow: hidden;
+          border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .back-home-btn:hover {
+          background: rgba(255, 255, 255, 0.9);
+          transform: translateY(-3px) scale(1.05);
+          box-shadow: 0 12px 30px rgba(255, 255, 255, 0.4);
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 60px 32px;
+          transition: padding-left 0.3s ease;
+        }
+
+        .page-header {
+          text-align: center;
+          margin-bottom: 60px;
+        }
+
+        .page-header h1 {
+          color: var(--primary-dark);
+          font-size: 3rem;
+          font-weight: 700;
+          margin-bottom: 16px;
+          letter-spacing: -1px;
+        }
+
+        .page-header p {
+          color: var(--text-light);
+          font-size: 1.2rem;
+          max-width: 600px;
+          margin: 0 auto 32px;
+        }
 
         .search-controls {
           display: flex;
@@ -192,6 +323,29 @@ export default function RegistrationPage() {
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(124, 37, 175, 0.1);
+        }
+
+        .file-card::before {
+          content: "";
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(45deg, transparent, rgba(124, 37, 175, 0.05), transparent);
+          transform: rotate(45deg);
+          transition: all 0.3s ease;
+          opacity: 0;
+        }
+
+        .file-card:hover::before {
+          opacity: 1;
+          animation: shimmer 0.6s ease-in-out;
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+          100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .file-card:hover {
@@ -393,6 +547,36 @@ export default function RegistrationPage() {
           .btn {
             justify-content: center;
           }
+
+          .top-header {
+            padding: 25px 20px;
+          }
+          
+          .header-container {
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+          }
+          
+          .header-left {
+            gap: 15px;
+          }
+          
+          .office-info h2 {
+            font-size: 1.5rem;
+          }
+          
+          .header-right {
+            flex-direction: column;
+            gap: 20px;
+          }
+          
+          .contact-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+          }
         }
 
         @media (max-width: 480px) {
@@ -416,17 +600,18 @@ export default function RegistrationPage() {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
       {/* Sidebar */}
-      {/* <Sidebar /> */}
-      {/* <header className="top-header"> ... </header> */}
+      {/* Removed Google Fonts + Font Awesome links */}
+      {/* Removed standalone <Sidebar /> */}
+      {/* Removed old page-specific <header className="top-header">...</header> */}
 
       <Layout>
-        {/* Main Content */}
         <div className="container">
           <div className="page-header">
-            <h1>Registration Department</h1>
-            <p>Official registration forms & documents — latest first.</p>
+            <h1>Finance Department</h1>
+            <p>Official finance forms & documents — latest first.</p>
           </div>
 
+          {/* Existing search, view toggle, loading/empty/list/grid content */}
           <div className="search-controls">
             <div className="search-wrap" role="search">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -434,22 +619,20 @@ export default function RegistrationPage() {
                 <path d="M10.75 18a7.25 7.25 0 1 1 0-14.5 7.25 7.25 0 0 1 0 14.5z" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input 
-                id="search" 
-                placeholder="Search by title or description"
+                type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by title or description"
               />
             </div>
             <div className="view-toggle">
               <button 
-                id="gridViewBtn" 
                 className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
                 onClick={() => setViewMode('grid')}
               >
                 <i className="fas fa-grip"></i> Grid
               </button>
               <button 
-                id="listViewBtn" 
                 className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
                 onClick={() => setViewMode('list')}
               >
@@ -461,13 +644,13 @@ export default function RegistrationPage() {
           {loading ? (
             <div className="empty-state">
               <i className="fas fa-spinner fa-spin"></i>
-              <h3>Loading registration forms...</h3>
-              <p>Please wait while we fetch the latest forms for you.</p>
+              <h3>Loading...</h3>
+              <p>Please wait while we fetch the finance forms.</p>
             </div>
           ) : filteredFiles.length === 0 ? (
             <div className="empty-state">
-              <i className="fas fa-folder-open"></i>
-              <h3>No registration forms available</h3>
+              <i className="fas fa-dollar-sign"></i>
+              <h3>No Finance forms available</h3>
               <p>If you are an admin, you can upload new forms from the admin panel to make them available for download.</p>
             </div>
           ) : (
@@ -477,7 +660,7 @@ export default function RegistrationPage() {
                   {viewMode === 'list' && (
                     <>
                       <div className="file-meta">
-                        <span className="dept-badge">Registration</span>
+                        <span className="dept-badge">Finance</span>
                         <span className="file-date">{formatDate(file.upload_date)}</span>
                       </div>
                       <div className="file-content">
@@ -502,7 +685,7 @@ export default function RegistrationPage() {
                   {viewMode === 'grid' && (
                     <>
                       <div className="file-meta">
-                        <span className="dept-badge">Registration</span>
+                        <span className="dept-badge">Finance</span>
                         <span className="file-date">{formatDate(file.upload_date)}</span>
                       </div>
                       <h3>{file.title}</h3>

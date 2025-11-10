@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Layout from "@/components/Layout";
+import News from "@/components/News";
 
 export default function HomePage() {
   return (
@@ -10,6 +11,9 @@ export default function HomePage() {
           <h1>Abedeen HR Office</h1>
           <p>Welcome! Please select a department to view or download files.</p>
         </div>
+
+        {/* News Section */}
+        <News />
 
         <div className="menu-grid">
           <div className="menu-item">

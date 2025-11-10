@@ -23,7 +23,16 @@ export default function Header() {
               <i className="fas fa-envelope"></i> admin@abedeen.edu.my
             </p>
           </div>
-          <Link href="/admin" className="admin-login-btn">
+          {/* Compact icons for mobile */}
+          <div className="contact-icons">
+            <a href="tel:03-8687-6999" aria-label="Call">
+              <i className="fas fa-phone"></i>
+            </a>
+            <a href="mailto:admin@abedeen.edu.my" aria-label="Email">
+              <i className="fas fa-envelope"></i>
+            </a>
+          </div>
+          <Link href="/login" className="admin-login-btn">
             Admin Login
           </Link>
         </div>

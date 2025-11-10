@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
+import Sidebar from '@/components/Sidebar';
 import Layout from "@/components/Layout";
 
-interface FormFile {
+interface CanteenFile {
   id: number;
   title: string;
   description: string;
   file_name: string;
-  department: string;
   upload_date: string;
-  file_size: number;
+  department: string;
 }
 
-export default function RegistrationPage() {
-  const [files, setFiles] = useState<FormFile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+export default function CanteenPage() {
+  const [files, setFiles] = useState<CanteenFile[]>([]);
+  const [filteredFiles, setFilteredFiles] = useState<CanteenFile[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [filteredFiles, setFilteredFiles] = useState<FormFile[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchFiles();
+    fetchCanteenFiles();
   }, []);
 
   useEffect(() => {
@@ -32,32 +32,42 @@ export default function RegistrationPage() {
     setFilteredFiles(filtered);
   }, [files, searchTerm]);
 
-  const fetchFiles = async () => {
+  const fetchCanteenFiles = async () => {
     try {
-      const response = await fetch('/api/forms?department=registration');
+      setLoading(true);
+      const response = await fetch('/api/forms?department=canteen');
       if (response.ok) {
         const data = await response.json();
         setFiles(data);
       }
     } catch (error) {
-      console.error('Error fetching files:', error);
+      console.error('Error fetching canteen files:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  const handleDownload = (filePath: string, fileName: string) => {
+    const link = document.createElement('a');
+    link.href = filePath;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handlePreview = (filePath: string) => {
+    window.open(filePath, '_blank');
+  };
+
+  const handleCanteenPortal = () => {
+    window.open('https://canteen.abedeen.edu.my/', '_blank', 'noopener,noreferrer');
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'short',
+      month: 'long',
       day: 'numeric'
     });
   };
@@ -78,14 +88,15 @@ export default function RegistrationPage() {
           --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+        body {
+          font-family: 'Inter', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          line-height: 1.6;
+          min-height: 100vh;
+        }
 
-        /* Removed page-specific Sidebar overrides to use global responsive Sidebar */
-        /* .sidebar { ... } */
-        /* .sidebar:hover { ... } */
-        /* .sidebar-menu { ... } */
-
+        /* Top header */
         .top-header {
           background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
           color: var(--white);
@@ -96,10 +107,191 @@ export default function RegistrationPage() {
           overflow: hidden;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 60px 32px; transition: padding-left 0.3s ease; }
-        .page-header { text-align: center; margin-bottom: 60px; }
-        .page-header h1 { color: var(--primary-dark); font-size: 3rem; font-weight: 700; margin-bottom: 16px; letter-spacing: -1px; }
-        .page-header p { color: var(--text-light); font-size: 1.2rem; max-width: 600px; margin: 0 auto 32px; }
+        .header-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: relative;
+          z-index: 1;
+        }
+
+        .header-left {
+          display: flex;
+          align-items: center;
+          gap: 25px;
+        }
+
+        .logo {
+          height: 85px;
+          width: 85px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .logo img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+
+        .office-info h2 {
+          font-size: 1.8rem;
+          font-weight: 700;
+          margin-bottom: 6px;
+          letter-spacing: -0.5px;
+          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+          background: linear-gradient(45deg, #fff, #f0f8ff);
+          background-clip: text;
+          -webkit-background-clip: text;
+          color: transparent;
+        }
+
+        .office-info p {
+          font-size: 1rem;
+          opacity: 0.95;
+          margin: 3px 0;
+          color: #e8f4fd;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-right {
+          display: flex;
+          align-items: center;
+          gap: 35px;
+        }
+
+        .contact-info {
+          text-align: right;
+          font-size: 1rem;
+        }
+
+        .contact-info p {
+          margin: 8px 0;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          justify-content: flex-end;
+          color: #e8f4fd;
+          font-weight: 500;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-info i {
+          background: var(--white);
+          color: var(--primary);
+          padding: 8px;
+          border-radius: 10px;
+          font-size: 14px;
+          box-shadow: 0 3px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .back-home-btn {
+          padding: 15px 30px;
+          background: var(--white);
+          color: var(--primary);
+          font-weight: 600;
+          border-radius: 50px;
+          text-decoration: none;
+          transition: all 0.4s ease;
+          box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+          position: relative;
+          overflow: hidden;
+          border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .back-home-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          transition: left 0.5s ease;
+        }
+
+        .back-home-btn:hover::before {
+          left: 100%;
+        }
+
+        .back-home-btn:hover {
+          background: rgba(255, 255, 255, 0.9);
+          transform: translateY(-3px) scale(1.05);
+          box-shadow: 0 12px 30px rgba(255, 255, 255, 0.4);
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 60px 32px;
+          transition: padding-left 0.3s ease;
+        }
+
+        .page-header {
+          text-align: center;
+          margin-bottom: 60px;
+        }
+
+        .page-header h1 {
+          color: var(--primary-dark);
+          font-size: 3rem;
+          font-weight: 700;
+          margin-bottom: 16px;
+          letter-spacing: -1px;
+        }
+
+        .page-header p {
+          color: var(--text-light);
+          font-size: 1.2rem;
+          max-width: 600px;
+          margin: 0 auto 32px;
+        }
+
+        /* Canteen portal card */
+        .portal-card {
+          background: var(--white);
+          border-radius: 20px;
+          box-shadow: var(--shadow);
+          padding: 20px 24px;
+          margin-bottom: 24px;
+          display: grid;
+          grid-template-columns: 1fr auto;
+          align-items: center;
+          gap: 16px;
+          justify-items: start;
+          transition: all 0.3s ease;
+          border: 1px solid rgba(124, 37, 175, 0.1);
+        }
+
+        .portal-card:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-hover);
+          border-color: rgba(124, 37, 175, 0.2);
+        }
+
+        .portal-card h2 {
+          color: var(--primary-dark);
+          font-weight: 700;
+          margin-bottom: 6px;
+          font-size: 1.4rem;
+        }
+
+        .portal-card p {
+          color: var(--text-light);
+          margin: 0;
+          font-size: 1rem;
+        }
+
+        .portal-card .btn {
+          flex: 0 0 auto;
+          white-space: nowrap;
+          min-width: 140px;
+          justify-self: end;
+        }
 
         .search-controls {
           display: flex;
@@ -194,6 +386,29 @@ export default function RegistrationPage() {
           border: 1px solid rgba(124, 37, 175, 0.1);
         }
 
+        .file-card::before {
+          content: "";
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(45deg, transparent, rgba(124, 37, 175, 0.05), transparent);
+          transform: rotate(45deg);
+          transition: all 0.3s ease;
+          opacity: 0;
+        }
+
+        .file-card:hover::before {
+          opacity: 1;
+          animation: shimmer 0.6s ease-in-out;
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+          100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
         .file-card:hover {
           transform: translateY(-8px);
           box-shadow: var(--shadow-hover);
@@ -266,6 +481,8 @@ export default function RegistrationPage() {
           display: flex;
           align-items: center;
           gap: 8px;
+          border: none;
+          cursor: pointer;
         }
 
         .btn-primary {
@@ -320,6 +537,7 @@ export default function RegistrationPage() {
           line-height: 1.6;
         }
 
+        /* List view styles */
         .files-list .file-card {
           padding: 28px 32px;
           display: flex;
@@ -364,7 +582,50 @@ export default function RegistrationPage() {
           flex-shrink: 0;
         }
 
+        /* Responsive styles */
         @media (max-width: 768px) {
+          .top-header {
+            padding: 25px 20px;
+          }
+          
+          .header-container {
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+          }
+          
+          .header-left {
+            gap: 15px;
+          }
+          
+          .office-info h2 {
+            font-size: 1.5rem;
+          }
+          
+          .header-right {
+            flex-direction: column;
+            gap: 20px;
+          }
+          
+          .contact-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+          }
+
+          .portal-card {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 20px;
+          }
+
+          .portal-card .btn {
+            justify-self: center;
+            width: 100%;
+            max-width: 200px;
+          }
+
           .search-controls {
             flex-direction: column;
             align-items: stretch;
@@ -409,22 +670,25 @@ export default function RegistrationPage() {
           }
         }
       `}</style>
-
-      {/* Google Fonts */}
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      {/* Font Awesome */}
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-      {/* Sidebar */}
-      {/* <Sidebar /> */}
-      {/* <header className="top-header"> ... </header> */}
-
       <Layout>
-        {/* Main Content */}
         <div className="container">
           <div className="page-header">
-            <h1>Registration Department</h1>
-            <p>Official registration forms & documents — latest first.</p>
+            <h1>Canteen Department</h1>
+            <p>Official canteen forms & documents — latest first.</p>
+          </div>
+
+          {/* Abedeen Canteen Portal */}
+          <div className="portal-card" role="region" aria-label="Abedeen Canteen Portal">
+            <div>
+              <h2><i className="fas fa-utensils"></i> Abedeen Canteen Portal</h2>
+              <p>Preorder meals, check AB Card balance, and top up online.</p>
+            </div>
+            <button 
+              className="btn btn-primary"
+              onClick={handleCanteenPortal}
+            >
+              <i className="fas fa-external-link-alt"></i> Open Portal
+            </button>
           </div>
 
           <div className="search-controls">
@@ -442,14 +706,12 @@ export default function RegistrationPage() {
             </div>
             <div className="view-toggle">
               <button 
-                id="gridViewBtn" 
                 className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
                 onClick={() => setViewMode('grid')}
               >
                 <i className="fas fa-grip"></i> Grid
               </button>
               <button 
-                id="listViewBtn" 
                 className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
                 onClick={() => setViewMode('list')}
               >
@@ -461,13 +723,13 @@ export default function RegistrationPage() {
           {loading ? (
             <div className="empty-state">
               <i className="fas fa-spinner fa-spin"></i>
-              <h3>Loading registration forms...</h3>
-              <p>Please wait while we fetch the latest forms for you.</p>
+              <h3>Loading canteen forms...</h3>
+              <p>Please wait while we fetch the latest documents.</p>
             </div>
           ) : filteredFiles.length === 0 ? (
             <div className="empty-state">
-              <i className="fas fa-folder-open"></i>
-              <h3>No registration forms available</h3>
+              <i className="fas fa-utensils"></i>
+              <h3>No Canteen forms available</h3>
               <p>If you are an admin, you can upload new forms from the admin panel to make them available for download.</p>
             </div>
           ) : (
@@ -475,53 +737,43 @@ export default function RegistrationPage() {
               {filteredFiles.map((file) => (
                 <div key={file.id} className="file-card">
                   {viewMode === 'list' && (
-                    <>
-                      <div className="file-meta">
-                        <span className="dept-badge">Registration</span>
-                        <span className="file-date">{formatDate(file.upload_date)}</span>
-                      </div>
-                      <div className="file-content">
-                        <h3>{file.title}</h3>
-                        <p>{file.description}</p>
-                        <div className="file-footer">
-                          <div className="file-info">
-                            {formatFileSize(file.file_size)}
-                          </div>
-                          <div className="file-actions">
-                            <a href={`/uploads/${file.file_name}`} className="btn btn-primary" target="_blank">
-                              <i className="fas fa-download"></i> Download
-                            </a>
-                            <a href={`/uploads/${file.file_name}`} className="btn btn-secondary" target="_blank">
-                              <i className="fas fa-eye"></i> View
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </>
+                    <div className="file-meta">
+                      <div className="dept-badge">Canteen</div>
+                      <div className="file-date">{formatDate(file.upload_date)}</div>
+                    </div>
                   )}
-                  {viewMode === 'grid' && (
-                    <>
+                  
+                  <div className="file-content">
+                    {viewMode === 'grid' && (
                       <div className="file-meta">
-                        <span className="dept-badge">Registration</span>
-                        <span className="file-date">{formatDate(file.upload_date)}</span>
+                        <div className="dept-badge">Canteen</div>
+                        <div className="file-date">{formatDate(file.upload_date)}</div>
                       </div>
-                      <h3>{file.title}</h3>
-                      <p>{file.description}</p>
-                      <div className="file-footer">
-                        <div className="file-info">
-                          {formatFileSize(file.file_size)}
-                        </div>
-                        <div className="file-actions">
-                          <a href={`/uploads/${file.file_name}`} className="btn btn-primary" target="_blank">
-                            <i className="fas fa-download"></i> Download
-                          </a>
-                          <a href={`/uploads/${file.file_name}`} className="btn btn-secondary" target="_blank">
-                            <i className="fas fa-eye"></i> View
-                          </a>
-                        </div>
+                    )}
+                    
+                    <h3>{file.title}</h3>
+                    <p>{file.description}</p>
+                    
+                    <div className="file-footer">
+                      <div className="file-info">
+                        <i className="fas fa-file-pdf"></i> PDF Document
                       </div>
-                    </>
-                  )}
+                      <div className="file-actions">
+                        <button 
+                          className="btn btn-secondary"
+                          onClick={() => handlePreview(file.file_name)}
+                        >
+                          <i className="fas fa-eye"></i> Preview
+                        </button>
+                        <button 
+                          className="btn btn-primary"
+                          onClick={() => handleDownload(file.file_name, file.title)}
+                        >
+                          <i className="fas fa-download"></i> Download
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
