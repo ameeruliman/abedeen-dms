@@ -8,12 +8,15 @@ import Layout from "@/components/Layout";
 interface AdminUser {
   id: number;
   username: string;
+  email: string;
   department: string;
 }
 
 export default function RegisterAdminPage() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // New state for password visibility
   const [department, setDepartment] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -41,7 +44,7 @@ export default function RegisterAdminPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password || !department) {
+    if (!username || !email || !password || !department) {
       setError("All fields are required");
       return;
     }
@@ -62,7 +65,7 @@ export default function RegisterAdminPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password, department }),
+        body: JSON.stringify({ username, email, password, department }),
       });
 
       const data = await response.json();
@@ -136,16 +139,42 @@ export default function RegisterAdminPage() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="password">Admin Password</label>
+                <label htmlFor="email">Admin Email</label>
                 <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
-                  placeholder="Enter password"
+                  placeholder="Enter email"
                   required
                 />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Admin Password</label>
+                <div className="password-input-container">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    placeholder="Enter password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <img src="/eye-off.svg" alt="Hide password" />
+                    ) : (
+                      <img src="/eye.svg" alt="Show password" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="form-group">

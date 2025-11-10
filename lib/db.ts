@@ -1,4 +1,4 @@
-import mysql from 'mysql2/promise';
+import mysql, { RowDataPacket } from 'mysql2/promise';
 
 const pool = mysql.createPool({
   host: 'localhost',
@@ -11,9 +11,9 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-export async function query(sql, values = []) {
+export async function query(sql: string, values: any[] = []): Promise<RowDataPacket[]> {
   const [results] = await pool.execute(sql, values);
-  return results;
+  return results as RowDataPacket[];
 }
 
 export default pool;

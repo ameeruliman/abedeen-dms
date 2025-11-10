@@ -5,13 +5,13 @@ import bcrypt from "bcryptjs";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, password, department } = body;
+    const { username, email, password, department } = body;
 
-    if (!username || !password || !department) {
+    if (!username || !email || !password || !department) {
       return NextResponse.json(
         { 
           success: false,
-          error: "Username, password, and department are required" 
+          error: "Username, email, password, and department are required" 
         },
         { status: 400 }
       );
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
       CREATE TABLE IF NOT EXISTS admin (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
+        email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         department VARCHAR(50) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -50,8 +51,8 @@ export async function POST(request: NextRequest) {
 
     // Insert new admin
     const result: any = await query(
-      "INSERT INTO admin (username, password, department) VALUES (?, ?, ?)",
-      [username, hashedPassword, department]
+      "INSERT INTO admin (username, email, password, department) VALUES (?, ?, ?, ?)",
+      [username, email, hashedPassword, department]
     );
 
     return NextResponse.json({
