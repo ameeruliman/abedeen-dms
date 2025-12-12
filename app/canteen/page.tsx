@@ -761,13 +761,13 @@ export default function CanteenPage() {
                       <div className="file-actions">
                         <button 
                           className="btn btn-secondary"
-                          onClick={() => handlePreview(file.file_name)}
+                          onClick={() => handlePreview(`/api/files/${file.file_name}`)}
                         >
                           <i className="fas fa-eye"></i> Preview
                         </button>
                         <button 
                           className="btn btn-primary"
-                          onClick={() => handleDownload(file.file_name, file.title)}
+                          onClick={() => handleDownload(`/api/files/${file.file_name}`, file.title)}
                         >
                           <i className="fas fa-download"></i> Download
                         </button>

@@ -104,7 +104,7 @@ export default function RegisterAdminPage() {
               <img src="/logo.png" alt="HR Office Logo" className="logo" />
             </div>
             <h1>Register New Admin</h1>
-            <div className="admin-info">
+            <div className="admin-info" style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
               <p>Logged in as: <strong>{adminUser.username}</strong></p>
               <p>Department: <strong>{adminUser.department}</strong></p>
               <button onClick={handleLogout} className="logout-btn">Logout</button>

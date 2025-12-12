@@ -671,10 +671,10 @@ export default function FinancePage() {
                             {formatFileSize(file.file_size)}
                           </div>
                           <div className="file-actions">
-                            <a href={`/uploads/${file.file_name}`} className="btn btn-primary" target="_blank">
+                            <a href={`/api/files/${file.file_name}`} className="btn btn-primary" target="_blank">
                               <i className="fas fa-download"></i> Download
                             </a>
-                            <a href={`/uploads/${file.file_name}`} className="btn btn-secondary" target="_blank">
+                            <a href={`/api/files/${file.file_name}`} className="btn btn-secondary" target="_blank">
                               <i className="fas fa-eye"></i> View
                             </a>
                           </div>
@@ -695,10 +695,10 @@ export default function FinancePage() {
                           {formatFileSize(file.file_size)}
                         </div>
                         <div className="file-actions">
-                          <a href={`/uploads/${file.file_name}`} className="btn btn-primary" target="_blank">
+                          <a href={`/api/files/${file.file_name}`} className="btn btn-primary" target="_blank">
                             <i className="fas fa-download"></i> Download
                           </a>
-                          <a href={`/uploads/${file.file_name}`} className="btn btn-secondary" target="_blank">
+                          <a href={`/api/files/${file.file_name}`} className="btn btn-secondary" target="_blank">
                             <i className="fas fa-eye"></i> View
                           </a>
                         </div>

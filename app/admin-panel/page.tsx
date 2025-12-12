@@ -140,8 +140,8 @@ const [showAddNewSchoolIdSection, setShowAddNewSchoolIdSection] = useState(false
             file_type: file.file_type,
             department: file.department,
             upload_date: file.upload_date,
-            download_url: `/uploads/${file.file_name}`,
-            absolute_url: `${window.location.origin}/uploads/${file.file_name}`
+            download_url: `/api/files/${file.file_name}`,
+            absolute_url: `${window.location.origin}/api/files/${file.file_name}`
           });
         });
       } else {
@@ -820,26 +820,17 @@ const [showAddNewSchoolIdSection, setShowAddNewSchoolIdSection] = useState(false
                               </div>
                               <div className="file-actions">
                                 <a
-                                  href={`/uploads/${file.file_name}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  href={`/api/files/${file.file_name}`}
+                                  download
                                   className="btn btn-secondary btn-sm"
-                                  onClick={(e) => {
-                                    console.log("Download clicked for file:", file.file_name);
-                                    console.log("Full URL:", `/uploads/${file.file_name}`);
-                                    console.log("Absolute URL:", `${window.location.origin}/uploads/${file.file_name}`);
-                                  }}
                                 >
                                   <i className="fas fa-download"></i> Download
                                 </a>
                                 <a
-                                  href={`/uploads/${file.file_name}`}
+                                  href={`/api/files/${file.file_name}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="btn btn-primary btn-sm"
-                                  onClick={(e) => {
-                                    console.log("View clicked for file:", file.file_name);
-                                  }}
                                 >
                                   <i className="fas fa-eye"></i> View
                                 </a>

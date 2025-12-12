@@ -471,7 +471,7 @@ export default function VisaPage() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
                         <span style={{ color: 'var(--text-light)' }}>{formatFileSize(file.file_size)}</span>
                         <a
-                          href={`/files/${encodeURIComponent(file.file_name)}`}
+                          href={`/api/files/${encodeURIComponent(file.file_name)}`}
                           download
                           style={{
                             padding: '10px 16px',
@@ -501,7 +501,7 @@ export default function VisaPage() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
                         <span style={{ color: 'var(--text-light)' }}>{formatFileSize(file.file_size)}</span>
                         <a
-                          href={`/files/${encodeURIComponent(file.file_name)}`}
+                          href={`/api/files/${encodeURIComponent(file.file_name)}`}
                           download
                           style={{
                             padding: '10px 16px',
